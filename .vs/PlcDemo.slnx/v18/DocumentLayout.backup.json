@@ -1,0 +1,85 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\yzyao\\Documents\\clpdemo\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F2E6858D-D5FA-4678-A7D4-ECEAAE596AB4}|\u89E3\u51B3\u65B9\u6848\u9879{F2E6858D-D5FA-4678-A7D4-ECEAAE596AB4}|C:\\Users\\yzyao\\Documents\\clpdemo\\DOTNET_API_DEVELOPER_GUIDE.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownPreview",
+      "RelativeMoniker": "D:0:0:{F2E6858D-D5FA-4678-A7D4-ECEAAE596AB4}|\u89E3\u51B3\u65B9\u6848\u9879{F2E6858D-D5FA-4678-A7D4-ECEAAE596AB4}|solutionrelative:DOTNET_API_DEVELOPER_GUIDE.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownPreview"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F2E6858D-D5FA-4678-A7D4-ECEAAE596AB4}|\u89E3\u51B3\u65B9\u6848\u9879{F2E6858D-D5FA-4678-A7D4-ECEAAE596AB4}|C:\\Users\\yzyao\\Documents\\clpdemo\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownPreview",
+      "RelativeMoniker": "D:0:0:{F2E6858D-D5FA-4678-A7D4-ECEAAE596AB4}|\u89E3\u51B3\u65B9\u6848\u9879{F2E6858D-D5FA-4678-A7D4-ECEAAE596AB4}|solutionrelative:README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}|MarkdownPreview"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF122B53-BB65-BB74-E61B-027AA752DB69}|PlcDemo.Wpf\\PlcDemo.Wpf.csproj|c:\\users\\yzyao\\documents\\clpdemo\\plcdemo.wpf\\models\\plccasemodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CF122B53-BB65-BB74-E61B-027AA752DB69}|PlcDemo.Wpf\\PlcDemo.Wpf.csproj|solutionrelative:plcdemo.wpf\\models\\plccasemodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CF122B53-BB65-BB74-E61B-027AA752DB69}|PlcDemo.Wpf\\PlcDemo.Wpf.csproj|c:\\users\\yzyao\\documents\\clpdemo\\plcdemo.wpf\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{CF122B53-BB65-BB74-E61B-027AA752DB69}|PlcDemo.Wpf\\PlcDemo.Wpf.csproj|solutionrelative:plcdemo.wpf\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DOTNET_API_DEVELOPER_GUIDE.md [\u9884\u89C8]",
+              "DocumentMoniker": "C:\\Users\\yzyao\\Documents\\clpdemo\\DOTNET_API_DEVELOPER_GUIDE.md",
+              "RelativeDocumentMoniker": "DOTNET_API_DEVELOPER_GUIDE.md",
+              "ToolTip": "C:\\Users\\yzyao\\Documents\\clpdemo\\DOTNET_API_DEVELOPER_GUIDE.md [\u9884\u89C8]",
+              "RelativeToolTip": "DOTNET_API_DEVELOPER_GUIDE.md [\u9884\u89C8]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-06-14T10:28:56.736Z",
+              "EditorCaption": " [\u9884\u89C8]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "README.md [\u9884\u89C8]",
+              "DocumentMoniker": "C:\\Users\\yzyao\\Documents\\clpdemo\\README.md",
+              "RelativeDocumentMoniker": "README.md",
+              "ToolTip": "C:\\Users\\yzyao\\Documents\\clpdemo\\README.md [\u9884\u89C8]",
+              "RelativeToolTip": "README.md [\u9884\u89C8]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
+              "WhenOpened": "2026-06-14T10:26:27.824Z",
+              "EditorCaption": " [\u9884\u89C8]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "PlcCaseModels.cs",
+              "DocumentMoniker": "C:\\Users\\yzyao\\Documents\\clpdemo\\PlcDemo.Wpf\\Models\\PlcCaseModels.cs",
+              "RelativeDocumentMoniker": "PlcDemo.Wpf\\Models\\PlcCaseModels.cs",
+              "ToolTip": "C:\\Users\\yzyao\\Documents\\clpdemo\\PlcDemo.Wpf\\Models\\PlcCaseModels.cs",
+              "RelativeToolTip": "PlcDemo.Wpf\\Models\\PlcCaseModels.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-14T10:21:22.846Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\yzyao\\Documents\\clpdemo\\PlcDemo.Wpf\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "PlcDemo.Wpf\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\yzyao\\Documents\\clpdemo\\PlcDemo.Wpf\\MainWindow.xaml",
+              "RelativeToolTip": "PlcDemo.Wpf\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-06-14T10:21:09.033Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

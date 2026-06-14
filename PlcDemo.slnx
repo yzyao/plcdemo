@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/解决方案项/">
+    <File Path="ARCHITECTURE.md" />
+    <File Path="CODE_WALKTHROUGH.md" />
+    <File Path="DOTNET_API_DEVELOPER_GUIDE.md" />
+    <File Path="MAINVIEWMODEL_GUIDE.md" />
+    <File Path="MODBUS_FRAMES.md" />
+    <File Path="PLC_CASES.md" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="PlcDemo.Wpf\PlcDemo.Wpf.csproj" />
+</Solution>

@@ -1,0 +1,641 @@
+<Window x:Class="PlcDemo.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:PlcDemo.Wpf.ViewModels"
+        mc:Ignorable="d"
+        Title="PLC 通讯学习 Demo"
+        Height="900"
+        Width="1500"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource AppBackgroundBrush}">
+    <Window.Resources>
+        <GeometryGroup x:Key="TrendGridGeometry">
+            <LineGeometry StartPoint="72,32" EndPoint="72,324" />
+            <LineGeometry StartPoint="72,324" EndPoint="972,324" />
+            <LineGeometry StartPoint="72,99" EndPoint="972,99" />
+            <LineGeometry StartPoint="72,166" EndPoint="972,166" />
+            <LineGeometry StartPoint="72,233" EndPoint="972,233" />
+            <LineGeometry StartPoint="72,300" EndPoint="972,300" />
+        </GeometryGroup>
+
+        <Style TargetType="TabItem">
+            <Setter Property="Padding" Value="16,8" />
+            <Setter Property="Margin" Value="0,0,8,0" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushSoft}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="Root"
+                                Padding="{TemplateBinding Padding}"
+                                Margin="{TemplateBinding Margin}"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="14,14,8,8">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              ContentSource="Header" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource AccentBrush}" />
+                                <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SmallMutedText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+        </Style>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Style="{DynamicResource HeroCard}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="PLC / Modbus 学习工作台"
+                               Style="{DynamicResource HeroTitle}" />
+                    <TextBlock Margin="0,8,0,0"
+                               Text="从通讯协议入门扩展到真实上位机场景：设备监控、产线节拍、安全联锁、参数写入验证、日志、报警、趋势和报文解析。"
+                               Style="{DynamicResource HeroSubtitle}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center">
+                    <Button Content="连接"
+                            Style="{DynamicResource PrimaryButton}"
+                            Command="{Binding ConnectCommand}" />
+                    <Button Content="断开"
+                            Margin="12,0,0,0"
+                            Style="{DynamicResource SecondaryButton}"
+                            Command="{Binding DisconnectCommand}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="420" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <Border Style="{DynamicResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="连接配置" Style="{DynamicResource SectionTitle}" />
+                            <Grid Margin="0,16,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="协议" VerticalAlignment="Center" />
+                                <ComboBox Grid.Column="1"
+                                          ItemsSource="{Binding ProtocolOptions}"
+                                          SelectedItem="{Binding SelectedProtocol}" />
+
+                                <TextBlock Grid.Row="1" Text="地址" VerticalAlignment="Center" Margin="0,12,0,0" />
+                                <TextBox Grid.Row="1" Grid.Column="1" Margin="0,12,0,0"
+                                         Text="{Binding Host, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock Grid.Row="2" Text="端口" VerticalAlignment="Center" Margin="0,12,0,0" />
+                                <TextBox Grid.Row="2" Grid.Column="1" Margin="0,12,0,0"
+                                         Text="{Binding Port, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock Grid.Row="3" Text="站号" VerticalAlignment="Center" Margin="0,12,0,0" />
+                                <TextBox Grid.Row="3" Grid.Column="1" Margin="0,12,0,0"
+                                         Text="{Binding UnitId, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock Grid.Row="4" Text="串口名" VerticalAlignment="Center" Margin="0,12,0,0" />
+                                <TextBox Grid.Row="4" Grid.Column="1" Margin="0,12,0,0"
+                                         Text="{Binding SerialPortName, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock Grid.Row="5" Text="波特率" VerticalAlignment="Center" Margin="0,12,0,0" />
+                                <TextBox Grid.Row="5" Grid.Column="1" Margin="0,12,0,0"
+                                         Text="{Binding BaudRate, UpdateSourceTrigger=PropertyChanged}" />
+
+                                <TextBlock Grid.Row="6" Text="学习模式" VerticalAlignment="Center" Margin="0,12,0,0" />
+                                <ComboBox Grid.Row="6" Grid.Column="1" Margin="0,12,0,0"
+                                          ItemsSource="{Binding ModeOptions}"
+                                          SelectedItem="{Binding SelectedMode}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="0,20,0,0" Style="{DynamicResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="PLC 学习案例" Style="{DynamicResource SectionTitle}" />
+                            <ComboBox Margin="0,14,0,0"
+                                      ItemsSource="{Binding LearningCases}"
+                                      SelectedItem="{Binding SelectedLearningCase}"
+                                      DisplayMemberPath="Title" />
+                            <Button Margin="0,12,0,0"
+                                    Content="套用案例到读写参数"
+                                    Style="{DynamicResource PrimaryButton}"
+                                    Command="{Binding ApplySelectedCaseCommand}" />
+
+                            <TextBlock Margin="0,14,0,0"
+                                       Text="{Binding SelectedLearningCase.Scenario}"
+                                       Style="{StaticResource SmallMutedText}" />
+                            <TextBlock Margin="0,8,0,0"
+                                       Text="{Binding SelectedLearningCase.ReadRangeText}"
+                                       FontWeight="SemiBold" />
+                            <TextBlock Margin="0,6,0,0"
+                                       Text="{Binding SelectedLearningCase.RegisterMap}"
+                                       Style="{StaticResource SmallMutedText}" />
+                            <TextBlock Margin="0,6,0,0"
+                                       Text="{Binding SelectedLearningCase.Tip}"
+                                       Style="{StaticResource SmallMutedText}" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="0,20,0,0" Style="{DynamicResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="读写寄存器" Style="{DynamicResource SectionTitle}" />
+                            <UniformGrid Margin="0,16,0,0" Columns="2">
+                                <Button Content="读取保持寄存器"
+                                        Command="{Binding ReadHoldingRegistersCommand}"
+                                        Style="{DynamicResource SecondaryButton}" />
+                                <Button Content="写入单个寄存器"
+                                        Margin="12,0,0,0"
+                                        Command="{Binding WriteSingleRegisterCommand}"
+                                        Style="{DynamicResource SecondaryButton}" />
+                            </UniformGrid>
+                            <Grid Margin="0,16,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="起始地址" VerticalAlignment="Center" />
+                                <TextBox Grid.Column="1" Text="{Binding StartAddress, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Grid.Row="1" Text="读取数量" VerticalAlignment="Center" Margin="0,12,0,0" />
+                                <TextBox Grid.Row="1" Grid.Column="1" Margin="0,12,0,0" Text="{Binding ReadCount, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Grid.Row="2" Text="写入值" VerticalAlignment="Center" Margin="0,12,0,0" />
+                                <TextBox Grid.Row="2" Grid.Column="1" Margin="0,12,0,0" Text="{Binding WriteValue, UpdateSourceTrigger=PropertyChanged}" />
+                                <TextBlock Grid.Row="3" Text="刷新间隔" VerticalAlignment="Center" Margin="0,12,0,0" />
+                                <TextBox Grid.Row="3" Grid.Column="1" Margin="0,12,0,0" Text="{Binding RefreshIntervalMs, UpdateSourceTrigger=PropertyChanged}" />
+                            </Grid>
+
+                            <UniformGrid Margin="0,16,0,0" Columns="2">
+                                <Button Content="开始周期刷新"
+                                        Command="{Binding StartAutoRefreshCommand}"
+                                        Style="{DynamicResource PrimaryButton}" />
+                                <Button Content="停止周期刷新"
+                                        Margin="12,0,0,0"
+                                        Command="{Binding StopAutoRefreshCommand}"
+                                        Style="{DynamicResource SecondaryButton}" />
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Margin="0,20,0,0" Style="{DynamicResource Card}">
+                        <StackPanel>
+                            <TextBlock Text="当前状态" Style="{DynamicResource SectionTitle}" />
+                            <TextBlock Margin="0,14,0,0" Text="{Binding ConnectionState}" />
+                            <TextBlock Margin="0,6,0,0" Text="{Binding AutoRefreshState}" />
+                            <TextBlock Margin="0,6,0,0"
+                                       Text="{Binding SelectedProtocolDescription}"
+                                       Style="{StaticResource SmallMutedText}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border Grid.Column="2" Style="{DynamicResource Card}">
+                <TabControl Background="Transparent"
+                            BorderThickness="0"
+                            Padding="0">
+                    <TabItem Header="监控总览">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,14,0,0">
+                                <TextBlock Text="设备状态监控" Style="{DynamicResource SectionTitle}" />
+                                <TextBlock Margin="0,8,0,0"
+                                           Text="{Binding MonitorSummaryText}"
+                                           Style="{StaticResource SmallMutedText}" />
+                                <ItemsControl Margin="0,18,0,0" ItemsSource="{Binding StatusMetrics}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Columns="4" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource CaseStatusCardStyle}">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Label}" FontWeight="SemiBold" />
+                                                    <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding Value}" FontSize="26" FontWeight="SemiBold" />
+                                                        <TextBlock Text="{Binding Unit}" Margin="6,8,0,0" Foreground="{DynamicResource TextMutedBrush}" />
+                                                    </StackPanel>
+                                                    <TextBlock Margin="0,8,0,0" Text="{Binding LevelLabel}" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold" />
+                                                    <TextBlock Margin="0,6,0,0" Text="{Binding Description}" Style="{StaticResource SmallMutedText}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Header="案例说明">
+                        <Grid Margin="0,14,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="2*" />
+                                <RowDefinition Height="18" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <DataGrid ItemsSource="{Binding LearningCases}"
+                                      SelectedItem="{Binding SelectedLearningCase}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal"
+                                      RowHeaderWidth="0"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      Foreground="{DynamicResource TextBrush}"
+                                      IsReadOnly="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="案例" Binding="{Binding Title}" Width="150" />
+                                    <DataGridTextColumn Header="寄存器范围" Binding="{Binding ReadRangeText}" Width="140" />
+                                    <DataGridTextColumn Header="建议写入" Binding="{Binding SuggestedWriteText}" Width="120" />
+                                    <DataGridTextColumn Header="学习重点" Binding="{Binding Focus}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+
+                            <Border Grid.Row="2"
+                                    Padding="18"
+                                    Background="{DynamicResource SurfaceAltBrush}"
+                                    CornerRadius="18">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding SelectedLearningCase.Title}" FontSize="20" FontWeight="SemiBold" />
+                                    <TextBlock Margin="0,8,0,0" Text="{Binding SelectedLearningCase.Scenario}" Style="{StaticResource SmallMutedText}" />
+                                    <TextBlock Margin="0,8,0,0" Text="{Binding SelectedLearningCase.RegisterMap}" TextWrapping="Wrap" />
+                                    <TextBlock Margin="0,8,0,0" Text="{Binding SelectedLearningCase.Focus}" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                    <TextBlock Margin="0,8,0,0" Text="{Binding SelectedLearningCase.Tip}" Style="{StaticResource SmallMutedText}" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </TabItem>
+
+                    <TabItem Header="产线工序">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,14,0,0">
+                                <TextBlock Text="产线节拍分析" Style="{DynamicResource SectionTitle}" />
+                                <TextBlock Margin="0,8,0,0" Text="{Binding ProductionSummaryText}" Style="{StaticResource SmallMutedText}" />
+                                <ItemsControl Margin="0,18,0,0" ItemsSource="{Binding ProcessSteps}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <UniformGrid Columns="4" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource CaseStatusCardStyle}">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="SemiBold" />
+                                                    <TextBlock Margin="0,8,0,0" Text="{Binding AddressText}" FontFamily="Consolas" Foreground="{DynamicResource TextMutedBrush}" />
+                                                    <TextBlock Margin="0,12,0,0" Text="{Binding ValueText}" FontSize="18" FontWeight="SemiBold" />
+                                                    <TextBlock Margin="0,8,0,0" Text="{Binding LevelLabel}" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold" />
+                                                    <TextBlock Margin="0,8,0,0" Text="{Binding Description}" Style="{StaticResource SmallMutedText}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+
+                    <TabItem Header="安全联锁">
+                        <Grid Margin="0,14,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding InterlockSummaryText}"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextMutedBrush}" />
+                            <DataGrid Grid.Row="1"
+                                      Margin="0,14,0,0"
+                                      ItemsSource="{Binding InterlockItems}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal"
+                                      RowHeaderWidth="0"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      Foreground="{DynamicResource TextBrush}"
+                                      IsReadOnly="True"
+                                      RowStyle="{StaticResource InterlockRowStyle}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="联锁项" Binding="{Binding Name}" Width="130" />
+                                    <DataGridTextColumn Header="地址" Binding="{Binding AddressText}" Width="90" />
+                                    <DataGridTextColumn Header="实际" Binding="{Binding ActualText}" Width="80" />
+                                    <DataGridTextColumn Header="期望" Binding="{Binding ExpectedText}" Width="80" />
+                                    <DataGridTextColumn Header="结果" Binding="{Binding ResultText}" Width="90" />
+                                    <DataGridTextColumn Header="级别" Binding="{Binding LevelLabel}" Width="90" />
+                                    <DataGridTextColumn Header="说明" Binding="{Binding Description}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+
+                    <TabItem Header="参数验证">
+                        <StackPanel Margin="0,14,0,0">
+                            <TextBlock Text="参数写入验证" Style="{DynamicResource SectionTitle}" />
+                            <TextBlock Margin="0,8,0,0"
+                                       Text="{Binding ParameterSummaryText}"
+                                       Style="{StaticResource SmallMutedText}" />
+                            <Border Margin="0,18,0,0"
+                                    Padding="18"
+                                    Background="{DynamicResource SurfaceAltBrush}"
+                                    CornerRadius="18">
+                                <StackPanel>
+                                    <TextBlock Text="推荐操作" FontWeight="SemiBold" />
+                                    <TextBlock Margin="0,8,0,0" Text="1. 在左侧选择“参数写入验证”，点击“套用案例到读写参数”。" TextWrapping="Wrap" />
+                                    <TextBlock Margin="0,6,0,0" Text="2. 点击“连接”，再点击“写入单个寄存器”，把 HR30 写成建议值。" TextWrapping="Wrap" />
+                                    <TextBlock Margin="0,6,0,0" Text="3. 点击“读取保持寄存器”，读取 HR30-HR32，观察设定值、实际值和偏差。" TextWrapping="Wrap" />
+                                    <TextBlock Margin="0,6,0,0" Text="这个案例对应真实项目里的“参数下发后必须读回验证”。" Foreground="{DynamicResource AccentBrush}" FontWeight="SemiBold" TextWrapping="Wrap" />
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </TabItem>
+
+                    <TabItem Header="寄存器">
+                        <DockPanel Margin="0,14,0,0">
+                            <TextBlock DockPanel.Dock="Top" Text="保持寄存器表" Style="{DynamicResource SectionTitle}" />
+                            <DataGrid Margin="0,16,0,0"
+                                      ItemsSource="{Binding RegisterRows}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal"
+                                      RowHeaderWidth="0"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      Foreground="{DynamicResource TextBrush}"
+                                      IsReadOnly="True"
+                                      RowStyle="{StaticResource RegisterRowStyle}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="地址" Binding="{Binding Address}" Width="90" />
+                                    <DataGridTextColumn Header="数值" Binding="{Binding Value}" Width="*" />
+                                    <DataGridTextColumn Header="来源" Binding="{Binding Source}" Width="120" />
+                                    <DataGridTextColumn Header="状态" Binding="{Binding StateLabel}" Width="90" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </DockPanel>
+                    </TabItem>
+
+                    <TabItem Header="日志">
+                        <Border Margin="0,14,0,0" Background="Transparent">
+                            <ListBox ItemsSource="{Binding LogEntries}"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     FontFamily="Consolas"
+                                     Foreground="{DynamicResource TextBrush}" />
+                        </Border>
+                    </TabItem>
+
+                    <TabItem Header="报警">
+                        <Grid Margin="0,14,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding AlarmSummaryText}"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextMutedBrush}" />
+                            <DataGrid Grid.Row="1"
+                                      Margin="0,12,0,0"
+                                      ItemsSource="{Binding AlarmItems}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      CanUserDeleteRows="False"
+                                      HeadersVisibility="Column"
+                                      GridLinesVisibility="Horizontal"
+                                      RowHeaderWidth="0"
+                                      Background="Transparent"
+                                      BorderThickness="0"
+                                      Foreground="{DynamicResource TextBrush}"
+                                      IsReadOnly="True"
+                                      RowStyle="{StaticResource AlarmInfoRowStyle}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding TimestampText}" Width="90" />
+                                    <DataGridTextColumn Header="级别" Binding="{Binding SeverityLabel}" Width="80" />
+                                    <DataGridTextColumn Header="来源" Binding="{Binding Source}" Width="100" />
+                                    <DataGridTextColumn Header="内容" Binding="{Binding Message}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+
+                    <TabItem Header="趋势">
+                        <Grid Margin="0,14,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Text="{Binding TrendSummaryText}"
+                                       TextWrapping="Wrap"
+                                       Foreground="{DynamicResource TextMutedBrush}" />
+
+                            <Border Grid.Row="1"
+                                    Margin="0,12,0,0"
+                                    Padding="12"
+                                    Background="{DynamicResource SurfaceAltBrush}"
+                                    BorderBrush="{DynamicResource BorderBrushSoft}"
+                                    BorderThickness="1"
+                                    CornerRadius="18">
+                                <Viewbox Stretch="Uniform" StretchDirection="DownOnly" HorizontalAlignment="Stretch">
+                                    <Canvas Width="1000" Height="360" ClipToBounds="True">
+                                        <Path Stroke="{DynamicResource TrendGridBrush}"
+                                              StrokeThickness="1"
+                                              Data="{StaticResource TrendGridGeometry}" />
+                                        <Polyline Points="{Binding TrendPolylinePoints}"
+                                                  Stroke="{DynamicResource TrendLineBrush}"
+                                                  StrokeThickness="3"
+                                                  StrokeLineJoin="Round"
+                                                  StrokeStartLineCap="Round"
+                                                  StrokeEndLineCap="Round" />
+
+                                        <Border Canvas.Left="72"
+                                                Canvas.Top="16"
+                                                Background="{DynamicResource SurfaceBrush}"
+                                                BorderBrush="{DynamicResource BorderBrushSoft}"
+                                                BorderThickness="1"
+                                                CornerRadius="10"
+                                                Padding="8,4">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="最大值 " FontSize="12" Foreground="{DynamicResource TextMutedBrush}" />
+                                                <TextBlock Text="{Binding TrendMaxLabel}" FontSize="12" FontWeight="SemiBold" />
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Canvas.Left="72"
+                                                Canvas.Top="312"
+                                                Background="{DynamicResource SurfaceBrush}"
+                                                BorderBrush="{DynamicResource BorderBrushSoft}"
+                                                BorderThickness="1"
+                                                CornerRadius="10"
+                                                Padding="8,4">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="最小值 " FontSize="12" Foreground="{DynamicResource TextMutedBrush}" />
+                                                <TextBlock Text="{Binding TrendMinLabel}" FontSize="12" FontWeight="SemiBold" />
+                                            </StackPanel>
+                                        </Border>
+
+                                        <Border Canvas.Left="850"
+                                                Canvas.Top="312"
+                                                Background="{DynamicResource SurfaceBrush}"
+                                                BorderBrush="{DynamicResource BorderBrushSoft}"
+                                                BorderThickness="1"
+                                                CornerRadius="10"
+                                                Padding="8,4">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="最新时间 " FontSize="12" Foreground="{DynamicResource TextMutedBrush}" />
+                                                <TextBlock Text="{Binding TrendLatestTimeLabel}" FontSize="12" FontWeight="SemiBold" />
+                                            </StackPanel>
+                                        </Border>
+                                    </Canvas>
+                                </Viewbox>
+                            </Border>
+
+                            <ItemsControl Grid.Row="2"
+                                          Margin="0,10,0,0"
+                                          ItemsSource="{Binding TrendSamples}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid Columns="4" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,0,8,8"
+                                                Padding="10"
+                                                Background="{DynamicResource SurfaceAltBrush}"
+                                                CornerRadius="12">
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding TimestampText}" FontWeight="SemiBold" />
+                                                <TextBlock Text="{Binding AddressText}" Margin="0,2,0,0" />
+                                                <TextBlock Text="{Binding ValueText}" Margin="0,2,0,0" FontFamily="Consolas" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </TabItem>
+
+                    <TabItem Header="报文">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="0,14,0,0">
+                                <TextBlock Text="报文解析" Style="{DynamicResource SectionTitle}" />
+                                <TextBlock Margin="0,12,0,0" Text="{Binding FrameSnapshot.Title}" FontWeight="SemiBold" />
+                                <TextBlock Margin="0,6,0,0" Text="{Binding FrameSnapshot.Summary}" Style="{StaticResource SmallMutedText}" />
+                                <TextBlock Margin="0,6,0,0" Text="{Binding FrameSnapshot.Notes}" Style="{StaticResource SmallMutedText}" />
+
+                                <TextBlock Margin="0,14,0,0" Text="请求帧" FontWeight="SemiBold" />
+                                <TextBlock Margin="0,4,0,0"
+                                           Text="{Binding FrameSnapshot.RequestHex}"
+                                           FontFamily="Consolas"
+                                           TextWrapping="Wrap" />
+
+                                <TextBlock Margin="0,10,0,0" Text="响应帧" FontWeight="SemiBold" />
+                                <TextBlock Margin="0,4,0,0"
+                                           Text="{Binding FrameSnapshot.ResponseHex}"
+                                           FontFamily="Consolas"
+                                           TextWrapping="Wrap" />
+
+                                <TextBlock Margin="0,14,0,0" Text="请求字段" FontWeight="SemiBold" />
+                                <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding FrameSnapshot.RequestFields}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="10"
+                                                    Margin="0,0,0,8"
+                                                    Background="{DynamicResource SurfaceAltBrush}"
+                                                    CornerRadius="12">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding Value}" Margin="0,2,0,0" FontFamily="Consolas" />
+                                                    <TextBlock Text="{Binding Description}" Margin="0,2,0,0" Style="{StaticResource SmallMutedText}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <TextBlock Margin="0,8,0,0" Text="响应字段" FontWeight="SemiBold" />
+                                <ItemsControl Margin="0,8,0,0" ItemsSource="{Binding FrameSnapshot.ResponseFields}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="10"
+                                                    Margin="0,0,0,8"
+                                                    Background="{DynamicResource SurfaceAltBrush}"
+                                                    CornerRadius="12">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" />
+                                                    <TextBlock Text="{Binding Value}" Margin="0,2,0,0" FontFamily="Consolas" />
+                                                    <TextBlock Text="{Binding Description}" Margin="0,2,0,0" Style="{StaticResource SmallMutedText}" />
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
